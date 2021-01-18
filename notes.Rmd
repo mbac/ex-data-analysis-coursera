@@ -1,0 +1,100 @@
+---
+title: "Exploratory Analysis"
+output:
+  html_document:
+    fig_caption: yes
+    css: md-modest.css
+  word_document:
+    toc: yes
+    fig_caption: yes
+  pdf_document:
+    
+    toc: yes
+---
+
+```{r setup, message=FALSE, warning=FALSE, include=FALSE}
+
+library(tidyverse)
+library(lattice)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+```
+
+\
+
+# The Lattice ^[plotting]{.smallcaps}^ system
+
+Basic call be like: `xyplot(y ~ x | f * g, data)`, where f and g are "conditioning" factors or groups.
+
+```{r}
+library(datasets)
+
+xyplot(Ozone ~ Wind, data = airquality)
+```
+
+Lattice plot according to category---better if it's a factor, I guess.
+
+```{r}
+
+airquality <- transform(airquality, Month = factor(Month))
+
+xyplot(Ozone ~ Wind | Month, data = airquality, layout = c(5, 1))
+```
+
+# ggplot2
+
+### `qplot()` (or, quick plot)
+
+The basic grammar of plots is that they are made of *aeshtetics* (size, kinds of points, colors) and *geoms* (points, lines...). `ggplot()` is the actual, generic function.
+
+```{r}
+library(ggplot2)
+
+qplot(displ, hwy, data = mpg)
+
+# then you can change the color:
+qplot(displ, hwy, data = mpg, color = drv)
+
+# Add geoms, one at a time. When setting arg explicitly, you need to specify
+# each and every one of them, including those that would have been default.
+qplot(displ, hwy, data = mpg, geom = c("point", "smooth"))
+```
+
+### Histos
+
+Single variable → histogram.
+
+```{r}
+
+qplot(hwy, data = mpg, fill = drv)
+```
+
+### Facets
+
+Panel plots in facets using `facets` argument; variables on LHS are rows, RHS columns. Indicate "no var" with `.`.
+
+```{r}
+
+qplot(displ, hwy, data = mpg, facets = . ~ drv)
+
+
+qplot(hwy, data = mpg, facets = drv ~ .)
+
+```
+
+## Real `ggplot2`
+
+Component of a god-fearing upstanding ggplot:
+
+-   A **data frame**
+
+-   **Aesthetic** mappings: map data to color, shape, size, etc...
+
+-   `geoms`: objects like points, lines, shapes
+
+-   **Facets** for conditional plots
+
+-   **`stats`**: statistical transformations like bins, quantiles, regression...
+
+-   **`scales`**: the scale that aesthetics use, when applicable
+
+-   **Coordinates**
